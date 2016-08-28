@@ -1,0 +1,137 @@
+Public Git hub repository : https://github.com/monikakhanna/HW2-PartC
+
+#Create a new git repository
+mkdir HW2-PartC
+cd HW2-PartC
+
+git init
+
+#configure a remote named origin for a github url
+#What command did you use to configure the remote?
+
+git remote add origin git@github.com:monikakhanna/HW2-PartC.git
+
+configures a remote named origin for the local repo. It links local repo  to the remote repository on github with given url .
+
+
+#output of git remote -v 
+
+ If we had cloned the local repo from the above github url, then
+remote named origin is automatically created, we don’t have to create it explicitly. In either case , output of git remote -v is as follows:
+
+origin	git@github.com:monikakhanna/HW2-PartC.git (fetch)
+origin	git@github.com:monikakhanna/HW2-PartC.git (push)
+
+
+
+# Run git fetch remotename (substituting your remote name for remotename)
+
+git fetch origin
+
+
+#Did anything appear in your working directory? Why?
+No. 
+
+The changes that are fetched from remote origin are updated into remote-tracking branch called origin/master, which is different from local master branch. Local master branch is not affected by this. Also the working directory which contains the modifications done on current local branch checked out,  is not affected by this.
+
+#Update your local master branch with the remote one, and give the command you used to do so.
+
+We are in master branch and we have already run git fetch origin, do following to update local master branch.
+
+git merge origin/master
+
+#Your working directory should have been updated.
+
+Yes, local master and working directory now have the changes that were fetched from origin and were updated in remote-tracking branch origin/master during fetch operation.
+
+
+
+#But it's possible that when we ran git fetch, we fetched other branches as well! How could #we (i.e. what command could we use) find all the branches we may have gotten from the remote?
+
+  git branch -r
+
+  This commands lists all the remote-tracking branches that were created in our local repository corresponding to  all the branches on remotes linked to the local repositories.These branches are named as <remote name>/<branch name>
+
+
+  #NOTE: It's very bad practice to directly git checkout the remote-tracking branch. Instead, try to checkout the branch so that it creates a local branch based on the remote-tracking branch. If you're not sure how (it's pretty easy to guess, though), you can look it up.
+
+  Unless you explicitly checkout the branch , local branch is not created corresponding to the remote-tracking branch fetched from remote. Only local master branch gets created by default.   To create the local branch for a remote-tracking branch fetched from remote just use following command :
+
+  git checkout  -b <branch name>    origin/<branch name>
+
+It sets up branch <branch name> to track remote branch <branch name> from origin.
+
+
+
+
+
+#What is a bare repository? What makes it different from normal repositories? In what situations is it used?
+
+Bare Repository
+
+Repositories created with git init --bare are called bare repos. Bare repositories are customarily given a .git extension.
+
+What makes it different from normal repositories?
+Bare repositories are structured a bit differently from normal repositories. First off, they contain no working or checked out copy of your source files. So you can not create new version of files by directly working on bare repositories. Only way to get new versions on bare repositories is when another user pushes changes to it.  
+
+And second, bare repos store git revision history of your repo in the root folder of your repository instead of in a .git subfolder. 
+
+
+
+In what situations is it used?
+A working repository created with git init is for working. It is where you will actually edit, add and delete files and git commit to save your changes. If you are starting a project in a folder on your dev machine where you will add, edit and delete files of your project, use “git init”. Note: if you git clone a repository you will be given a working repository with the .git folder and copies of the working files for editing.
+
+A bare repository created with git init --bare is for… sharing. If you are collaborating with a team of developers, and need a place to share changes to a repo, then you will want to create a bare repository in centralized place where all users can push their changes (like github.com). Because git is a distributed version control system, no one will directly edit files in the shared centralized repository. Instead developers will clone the shared bare repo, make changes locally in their working copies of the repo, then push back to the shared bare repo to make their changes available to other users.
+
+Because no one ever makes edits directly to files in the shared bare repo, a working tree is not needed. In fact the working tree would just get in way and cause conflicts as users push code to the repository. This is why bare repositories exist and have no working tree.
+
+#In lecture, I was careful to explain the two-step procedure of using git fetch and git merge remotename/branchname to get commits from a remote. When would this be a good idea as opposed to simply doing git pull remotename branchname? Briefly discuss remote-tracking branches and their relevance in your answer.
+
+
+There are two set of branches in a local repository -  Local Branches and the corresponding remote-tracking branches. Remote tracking branch is actually a replica of remote branch existing on remote repository that is linked to this local repository.
+
+Local branches are the one that the developer works on and creates new versions of his work  on this branch. 
+
+Remote tracking branches are the copies of the branches existing on remote repository in the local repository. These are named as <remote name>/<local branch name> . Also the local branches can be set up to track these remote-tracking branches. Remote tracking  branches are updated with latest changes from corresponding branches on remote repository whenever the “git fetch origin” command is used. There is no change on the local branch with “git fetch” command. 
+
+     
+
+                                                         git fetch origin
+remote-tracking branch(local repo)<———————-remote branch (remote repository       
+                                                                                   represented by remote named origin)
+
+ 
+
+
+So  “git fetch origin”  command fetches the changes from all branches existing on remote repository and updates them into corresponding  local remote-tracking branch. It does not change anything in the local branches and the working tree.
+
+
+You have to explicitly merge the remote tracking branch into local branch as follows to finally get new updates from remote repository
+
+
+  git merge origin/master
+  
+Merges remote tracking branch into local branch checked out.
+
+
+GIT PULL
+With git pull , both fetching and merging are done in a single step.
+
+The problem with “git pull”   is that by both fetching and merging in one command, your working directory is updated without giving you a chance to examine the changes you’ve just brought into your repository. 
+
+
+git fetch doesn’t touch your working tree at all, so gives you a chance to examine what changes you have fetched from remote repository  and then decide what you want to do next.
+You can merge in the changes that you have just got from origin with: git merge origin/master
+or
+If you first want to see what the differences are between your local branch and the remote one, you could do that with
+
+git diff master origin/master
+
+#I didn't ask you to do this, but suppose I asked you to make a commit on the 'other' branch. If I wanted you to push this branch, what command would you use?
+
+To push a branch that is created locally but not existing on remote named origin and there is no remote-tracking branch as well, use following command :
+
+git push -u origin <branch name>
+
+This will create a remote-tracking branch for this local branch and also push this branch on remote named origin.
+
